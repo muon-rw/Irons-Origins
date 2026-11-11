@@ -1,0 +1,19 @@
+{
+  "type": "apoli:active_self",
+  "key": {
+    "key": "key.origins.primary_active"
+  },
+  "cooldown": 20,
+  "condition": {
+    "type": "irons_origins:mana",
+    "comparison": ">=",
+    "compare_to": 10
+  },
+  "entity_action": {
+    "type": "irons_origins:cast_spell",
+    "spell": "acid_orb",
+    "power_level": 4,
+    "mana_cost": 10,
+    "cast_time": 0
+  }
+}

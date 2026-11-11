@@ -1,0 +1,41 @@
+modLoader="javafml"
+loaderVersion="${loaderRange}"
+license="${license}"
+
+[[mods]]
+modId="${modid}"
+version="${version}"
+displayName="${modName}"
+authors="${author}"
+description='''${desc}'''
+
+[[mixins]]
+config="${modid}.mixins.json"
+
+[[dependencies.${modid}]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neoVersionRange}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${modid}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${mcVersionRange}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${modid}]]
+    modId="apoli"
+    type="required"
+    versionRange="${apoliRange}"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${modid}]]
+    modId="irons_spellbooks"
+    type="required"
+    versionRange="${ironsRange}"
+    ordering="AFTER"
+    side="BOTH"

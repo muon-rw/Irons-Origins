@@ -1,0 +1,12 @@
+{
+  "type": "irons_origins:prevent_death_with_mana",
+  "mana_multiplier": 4.0,
+  "entity_action": {
+    "type": "apoli:apply_effect",
+    "effect": {
+      "effect": "minecraft:resistance",
+      "duration": 60,
+      "amplifier": 2
+    }
+  }
+}

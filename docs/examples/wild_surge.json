@@ -1,0 +1,20 @@
+{
+  "type": "irons_origins:action_on_spell_cast",
+  "cast_conditions": {
+    "cast_types": ["instant", "long"]
+  },
+  "entity_action": {
+    "type": "apoli:chance",
+    "chance": 0.05,
+    "action": {
+      "type": "irons_origins:cast_spell",
+      "spell": {
+        "spell_school": "irons_spellbooks:evocation",
+        "min_rarity": "common",
+        "max_rarity": "rare",
+        "level_mode": "random"
+      },
+      "cast_time": 0
+    }
+  }
+}

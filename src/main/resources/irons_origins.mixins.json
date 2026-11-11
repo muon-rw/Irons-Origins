@@ -1,0 +1,34 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "dev.muon.irons_origins.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixinextras": {
+    "minVersion": "0.5.3"
+  },
+  "mixins": [
+    "AbstractSpellMixin",
+    "EntityMixin",
+    "LivingEntityMixin",
+    "PlayerRecastsMixin",
+    "ServerPlayerEventsMixin",
+    "SpellHealEventMixin",
+    "SyncedSpellDataAccessor",
+    "SyncedSpellDataMixin",
+    "TeleportSpellMixin",
+    "UtilsMixin"
+  ],
+  "client": [
+    "client.AnimationHelperMixin",
+    "client.CastBarOverlayMixin",
+    "client.ClientInputEventsMixin",
+    "client.ClientMagicDataAccessor",
+    "client.ClientMagicDataMixin",
+    "client.ClientPlayerEventsMixin",
+    "client.PowerHudRendererMixin",
+    "client.ServerPlayerEventsMixin"
+  ]
+}

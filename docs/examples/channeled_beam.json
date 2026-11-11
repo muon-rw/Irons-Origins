@@ -1,0 +1,17 @@
+{
+  "type": "apoli:active_self",
+  "key": {
+    "key": "key.origins.secondary_active"
+  },
+  "cooldown": 10,
+  "entity_action": {
+    "type": "irons_origins:cast_spell",
+    "spell": "ray_of_frost",
+    "power_level": 3,
+    "mana_cost": 5,
+    "continuous_cost": true,
+    "cost_interval": 20,
+    "casting_slowdown": false,
+    "player_animations": false
+  }
+}

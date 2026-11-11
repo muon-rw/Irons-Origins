@@ -1,0 +1,18 @@
+{
+  "type": "apoli:active_self",
+  "key": {
+    "key": "key.origins.primary_active"
+  },
+  "cooldown": 600,
+  "entity_action": {
+    "type": "apoli:raycast",
+    "distance": 16,
+    "block": false,
+    "entity": true,
+    "bientity_action": {
+      "type": "irons_origins:spell_thief",
+      "target_mana_cost": 25,
+      "interrupt_mode": "fail"
+    }
+  }
+}

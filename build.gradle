@@ -1,0 +1,195 @@
+plugins {
+    id 'idea'
+    id 'java-library'
+    id 'maven-publish'
+    id 'net.neoforged.moddev' version '2.0.144'
+    id 'dev.mixinmcp.decompile' version '1.6.0'
+}
+
+base {
+    archivesName = fileName
+}
+
+group = project.properties.modGroup
+version = "${project.properties.version}+${project.properties.mc_version}"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(project.properties.javaVersion)
+
+neoForge {
+    version = project.neo_version
+
+    parchment {
+        minecraftVersion = project.mc_version
+        mappingsVersion = project.parchment_version
+    }
+
+    runs {
+        configureEach {
+            logLevel = org.slf4j.event.Level.DEBUG
+            jvmArgument '-Xmx4G'
+        }
+        client {
+            client()
+            gameDirectory = project.file('run/client')
+        }
+        server {
+            server()
+            gameDirectory = project.file('run/server')
+            programArgument '--nogui'
+        }
+    }
+
+    mods {
+        "${modid}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+// MDG has no `localRuntime` out of the box. Deps here are on the dev runtime classpath but stay out of
+// `runtimeElements`, so they don't leak to maven consumers.
+configurations {
+    localRuntime
+    runtimeClasspath.extendsFrom(localRuntime)
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content { includeGroup "maven.modrinth" }
+    }
+    maven {
+        // Curios
+        url "https://maven.theillusivec4.top"
+        content { includeGroupByRegex "top\\.theillusivec4.*" }
+    }
+    maven {
+        // JEI
+        url "https://maven.blamejared.com"
+        content {
+            includeGroup "mezz.jei"
+            includeGroup "net.mezzdev.config"
+        }
+    }
+    maven { url 'https://maven.kosmx.dev/' }               // Player Animator
+    maven { url = "https://code.redspace.io/releases" }    // Iron's Spells, Iron's Lib
+    maven { url = "https://code.redspace.io/snapshots" }
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroupByRegex("software\\.bernie.*")
+            includeGroup("com.eliotlash.mclib")
+        }
+    }
+}
+
+dependencies {
+    // NeoForge bundles fabric-mixin and mixinextras, so neither is declared here.
+
+    // Origins (Overgrown's fork). Every type we register is an Apoli type; Origins is only here to test in.
+    implementation("maven.modrinth:opoli:${apoli_version}")
+    localRuntime("maven.modrinth:overgrowns-origins:${origins_version}")
+
+    // Iron's Spells 'n Spellbooks. 1.21.1 split irons_lib out of the main jar.
+    implementation("io.redspace:irons_spellbooks:${irons_version}")
+    implementation("io.redspace:irons_lib:${irons_lib_version}")
+
+    // Iron's runtime requirements
+    localRuntime("top.theillusivec4.curios:curios-neoforge:${curios_version}")
+    compileOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}:api")
+    localRuntime("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
+    localRuntime("software.bernie.geckolib:geckolib-neoforge-${mc_version}:${geckolib_version}")
+
+    // Dev env
+    localRuntime("mezz.jei:jei-${mc_version}-neoforge:${jei_version}")
+    localRuntime("net.mezzdev.config:mezz_config-${mc_version}-neoforge:${mezz_config_version}")
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+            modid          : modid,
+            version        : version,
+            modName        : modName,
+            author         : author,
+            desc           : desc,
+            license        : license,
+            mcVersionRange : mc_version_range,
+            neoVersionRange: neo_version_range,
+            loaderRange    : loader_version_range,
+            apoliRange     : apoli_version_range,
+            ironsRange     : irons_version_range
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                "Specification-Title"   : project.modName,
+                "Specification-Vendor"  : project.author,
+                "Specification-Version" : archiveVersion,
+                "Implementation-Title"  : project.name,
+                "Implementation-Version": archiveVersion,
+                "Implementation-Vendor" : project.author,
+                "Built-On-Minecraft"    : project.mc_version
+        ])
+    }
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('javadoc', Javadoc).configure {
+    failOnError = false
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = fileName
+            artifact(tasks.named('jar'))
+            artifact(tasks.named('sourcesJar', Jar))
+            artifact(tasks.named('javadocJar', Jar))
+        }
+    }
+    repositories {
+        maven {
+            name = "Muon"
+            url = uri(System.getenv("MAVEN_URL") ?: "https://maven.muon.rip/releases")
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+            authentication {
+                create(BasicAuthentication)
+            }
+        }
+    }
+}
+
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
+}

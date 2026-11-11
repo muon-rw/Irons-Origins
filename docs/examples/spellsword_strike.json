@@ -1,0 +1,24 @@
+{
+  "type": "irons_origins:action_on_spell_damage",
+  "cooldown": 100,
+  "hud_render": {
+    "should_render": true,
+    "bar_index": 3
+  },
+  "spell_conditions": {
+    "spell_school": "irons_spellbooks:lightning"
+  },
+  "bientity_condition": {
+    "type": "apoli:target_condition",
+    "condition": {
+      "type": "apoli:living"
+    }
+  },
+  "bientity_action": {
+    "type": "irons_origins:cast_spell",
+    "spell": "electrocute",
+    "power_level": 2,
+    "cast_time": 0,
+    "player_animations": false
+  }
+}
